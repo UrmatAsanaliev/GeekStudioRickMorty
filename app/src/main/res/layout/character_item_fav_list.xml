@@ -11,7 +11,7 @@
 
         <variable
             name="characterModel"
-            type="com.example.geekstudiorickmorty.domain.model.CharactersDomain" />
+            type="com.example.geekstudiorickmorty.domain.model.Characters" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

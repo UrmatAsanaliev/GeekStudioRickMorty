@@ -2,8 +2,10 @@ package com.example.geekstudiorickmorty.presentation.favorite.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.geekstudiorickmorty.domain.model.CharactersDomain
+import com.example.geekstudiorickmorty.domain.model.Characters
 import com.example.geekstudiorickmorty.domain.repository.RickAndMortyRepository
+import com.example.geekstudiorickmorty.domain.use_case.DeleteCharacterFromMyFavoriteListUseCase
+import com.example.geekstudiorickmorty.domain.use_case.GetAllFavoriteCharactersUseCase
 import com.example.geekstudiorickmorty.presentation.favorite.FavoriteState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -14,10 +16,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FavoriteViewModel @Inject constructor(
-    val repository: RickAndMortyRepository
+    private val getAllFavoriteCharactersUseCase: GetAllFavoriteCharactersUseCase,
+    private val deleteCharacterFromMyFavoriteListUseCase: DeleteCharacterFromMyFavoriteListUseCase
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow<FavoriteState>(FavoriteState())
+    private val _state = MutableStateFlow(FavoriteState())
     val state: StateFlow<FavoriteState> get() = _state
 
 
@@ -37,19 +40,16 @@ class FavoriteViewModel @Inject constructor(
                     isError = true
                 )
             }
-
         }
-
-
     }
 
-    suspend fun getFavoriteCharacters(): Flow<List<CharactersDomain>> {
-        return repository.getAllFavoriteCharacters()
+    suspend fun getFavoriteCharacters(): Flow<List<Characters>> {
+        return getAllFavoriteCharactersUseCase.getAllFavoriteCharacters()
     }
 
-    fun deleteCharacter(charactersDomain: CharactersDomain) {
+    fun deleteCharacter(charactersDomain: Characters) {
         viewModelScope.launch {
-            repository.deleteCharacterFromMyFavoriteList(charactersDomain)
+            deleteCharacterFromMyFavoriteListUseCase.deleteCharacterFromMyFavoriteList(charactersDomain)
         }
     }
 

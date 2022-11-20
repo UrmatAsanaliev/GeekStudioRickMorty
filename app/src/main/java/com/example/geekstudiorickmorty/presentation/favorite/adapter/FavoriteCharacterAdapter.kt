@@ -9,15 +9,15 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.geekstudiorickmorty.R
 import com.example.geekstudiorickmorty.databinding.CharacterItemFavListBinding
-import com.example.geekstudiorickmorty.domain.model.CharactersDomain
+import com.example.geekstudiorickmorty.domain.model.Characters
 import com.example.geekstudiorickmorty.presentation.character.view.CharacterListFragmentDirections
 import com.example.geekstudiorickmorty.presentation.favorite.view.FavoriteListFragmentDirections
-import comprmto.rickyandmorty.presentation.adapter.DiffUtilCallBack
-import comprmto.rickyandmorty.presentation.adapter.FROMCHARACTERLIST
-import comprmto.rickyandmorty.presentation.adapter.FROMFAVORITELIST
+import com.example.geekstudiorickmorty.presentation.character.view.DiffUtilCallBack
+import com.example.geekstudiorickmorty.presentation.character.view.FROMCHARACTERLIST
+import com.example.geekstudiorickmorty.presentation.character.view.FROMFAVORITELIST
 
 class FavoriteCharacterAdapter :
-    ListAdapter<CharactersDomain, FavoriteCharacterAdapter.CharacterViewHolder>(DiffUtilCallBack()) {
+    ListAdapter<Characters, FavoriteCharacterAdapter.CharacterViewHolder>(DiffUtilCallBack()) {
 
 
     class CharacterViewHolder(val binding: CharacterItemFavListBinding) :
@@ -58,7 +58,7 @@ class FavoriteCharacterAdapter :
             }
         }
 
-        fun bind(charactersDomain: CharactersDomain) {
+        fun bind(charactersDomain: Characters) {
             binding.characterModel = charactersDomain
             binding.executePendingBindings()
         }

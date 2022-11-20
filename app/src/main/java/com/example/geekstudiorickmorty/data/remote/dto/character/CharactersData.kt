@@ -2,8 +2,7 @@ package com.example.geekstudiorickmorty.data.remote.dto.character
 
 import androidx.paging.PagingData
 import androidx.paging.map
-import com.example.geekstudiorickmorty.data.remote.dto.location.Location
-import com.example.geekstudiorickmorty.domain.model.CharactersDomain
+import com.example.geekstudiorickmorty.domain.model.Characters
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -22,13 +21,11 @@ data class CharacterData(
     val created: String
 )
 
-
-fun Flow<PagingData<CharacterData>>.toCharactersDomain(list: List<CharactersDomain>): Flow<PagingData<CharactersDomain>> {
-
+fun Flow<PagingData<CharacterData>>.toCharactersDomain(list: List<Characters>): Flow<PagingData<Characters>> {
 
     return map { pagingData ->
         pagingData.map { characterData ->
-            CharactersDomain(
+            Characters(
                 id = characterData.id,
                 name = characterData.name,
                 status = characterData.status,
@@ -43,9 +40,8 @@ fun Flow<PagingData<CharacterData>>.toCharactersDomain(list: List<CharactersDoma
     }
 }
 
-
-fun CharacterData.toCharactersDomain(): CharactersDomain {
-    return CharactersDomain(
+fun CharacterData.toCharactersDomain(): Characters {
+    return Characters(
         id = id,
         name = name,
         status = status,

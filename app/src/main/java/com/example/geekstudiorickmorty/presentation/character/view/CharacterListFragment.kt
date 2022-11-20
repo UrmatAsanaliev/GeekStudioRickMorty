@@ -4,21 +4,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
-import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.geekstudiorickmorty.R
 import com.example.geekstudiorickmorty.databinding.FragmentCharacterListBinding
-import com.example.geekstudiorickmorty.domain.model.CharactersDomain
-import comprmto.rickyandmorty.presentation.adapter.CharacterAdapter
+import com.example.geekstudiorickmorty.domain.model.Characters
 import com.example.geekstudiorickmorty.presentation.character.viewmodel.CharacterViewModel
 import com.example.geekstudiorickmorty.presentation.character.viewmodel.states.ListType
 import com.example.geekstudiorickmorty.presentation.favorite.viewModel.FavoriteViewModel
@@ -38,11 +33,14 @@ class CharacterListFragment : Fragment() {
     lateinit var viewModelFavorite: FavoriteViewModel
     private lateinit var characterAdapter: CharacterAdapter
     lateinit var widthWindowClass: WindowSizeClass
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment
+
+
         binding = FragmentCharacterListBinding.inflate(layoutInflater, container, false)
         viewModel = ViewModelProvider(requireActivity())[CharacterViewModel::class.java]
         viewModelFavorite = ViewModelProvider(requireActivity())[FavoriteViewModel::class.java]
@@ -60,9 +58,6 @@ class CharacterListFragment : Fragment() {
         getListData()
 
         binding.refreshBtn.setOnClickListener {
-
-
-
         }
 
         lifecycleScope.launch {
@@ -82,17 +77,10 @@ class CharacterListFragment : Fragment() {
     }
 
     private fun setCharacterListLayoutManager() {
-        if (viewModel.getListType() == ListType.GridLayout) {
-
             val spanCount = if (widthWindowClass == WindowSizeClass.EXPANDED) 3 else 2
-
             binding.characterList.layoutManager = GridLayoutManager(requireContext(), spanCount)
-
             characterAdapter.setListType(ListType.GridLayout)
-        } else {
-            binding.characterList.layoutManager = LinearLayoutManager(requireContext())
-            characterAdapter.setListType(ListType.LinearLayout)
-        }
+
     }
 
     private fun getListData() {
@@ -116,7 +104,7 @@ class CharacterListFragment : Fragment() {
 
     }
 
-    private fun showAlertDialog(charactersDomain: CharactersDomain) {
+    private fun showAlertDialog(charactersDomain: Characters) {
 
         viewModel.getAllFavoriteCharacters()
 
@@ -151,7 +139,7 @@ class CharacterListFragment : Fragment() {
 
         binding.imageButton.setOnClickListener {
             val action =
-               CharacterListFragmentDirections.actionCharacterListFragmentToFilterDialog()
+                CharacterListFragmentDirections.actionCharacterListFragmentToFilterDialog()
             Navigation.findNavController(it).navigate(action)
         }
     }

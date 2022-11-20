@@ -11,5 +11,4 @@ class RickyAndMortyApplication : Application() {
         super.onCreate()
         Timber.plant(Timber.DebugTree())
     }
-
 }

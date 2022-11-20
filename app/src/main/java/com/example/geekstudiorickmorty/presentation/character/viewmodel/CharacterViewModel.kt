@@ -6,10 +6,13 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import com.example.geekstudiorickmorty.R
 import com.example.geekstudiorickmorty.data.remote.dto.character.toCharactersDomain
-import com.example.geekstudiorickmorty.domain.model.CharactersDomain
+import com.example.geekstudiorickmorty.domain.model.Characters
 import com.example.geekstudiorickmorty.domain.repository.RickAndMortyRepository
+import com.example.geekstudiorickmorty.domain.use_case.DeleteCharacterFromMyFavoriteListUseCase
+import com.example.geekstudiorickmorty.domain.use_case.GetAllCharactersUseCase
+import com.example.geekstudiorickmorty.domain.use_case.GetAllFavoriteCharactersUseCase
+import com.example.geekstudiorickmorty.domain.use_case.InsertMyFavoriteListUseCase
 import com.example.geekstudiorickmorty.presentation.character.viewmodel.states.CharacterActivityState
-import com.example.geekstudiorickmorty.presentation.character.viewmodel.states.ListType
 import com.example.geekstudiorickmorty.util.GenderState
 import com.example.geekstudiorickmorty.util.StatusState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,7 +25,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CharacterViewModel @Inject constructor(
-    private val repository: RickAndMortyRepository,
+    private val getAllCharactersUseCase: GetAllCharactersUseCase,
+    private val insertMyFavoriteListUseCase: InsertMyFavoriteListUseCase,
+    private val getAllFavoriteCharactersUseCase: GetAllFavoriteCharactersUseCase,
+    private val deleteCharacterFromMyFavoriteListUseCase: DeleteCharacterFromMyFavoriteListUseCase,
     private val app: Application
 ) : ViewModel() {
 
@@ -34,7 +40,7 @@ class CharacterViewModel @Inject constructor(
 
         viewModelScope.launch {
 
-            getListData().collect { it ->
+            getListData().collect {
                 _state.value = _state.value.copy(
                     characters = it
                 )
@@ -48,7 +54,7 @@ class CharacterViewModel @Inject constructor(
 
     }
 
-    suspend fun getListData(): Flow<PagingData<CharactersDomain>> {
+    suspend fun getListData(): Flow<PagingData<Characters>> {
 
         var characterName = _state.value.queryCharacterName.value
 
@@ -59,7 +65,7 @@ class CharacterViewModel @Inject constructor(
         val list = _state.value.favoriteCharacter
 
 
-        return repository.getAllCharacters(
+        return getAllCharactersUseCase.getAllCharacters(
             status = _state.value.statusState,
             gender = _state.value.genderState,
             characterName
@@ -98,10 +104,10 @@ class CharacterViewModel @Inject constructor(
     }
 
 
-    fun insertMyFavoriteList(character: CharactersDomain) {
+    fun insertMyFavoriteList(character: Characters) {
         viewModelScope.launch {
             try {
-                repository.insertMyFavoriteList(character)
+                insertMyFavoriteListUseCase.insertMyFavoriteCharacters(character)
                 updateToastMessage(app.getString(R.string.toast_message_success))
             } catch (e: Exception) {
                 updateToastMessage(app.getString(R.string.toast_message_error))
@@ -112,7 +118,7 @@ class CharacterViewModel @Inject constructor(
 
     fun getAllFavoriteCharacters() {
         viewModelScope.launch {
-            repository.getAllFavoriteCharacters().collect {
+            getAllFavoriteCharactersUseCase.getAllFavoriteCharacters().collect {
                 _state.value = _state.value.copy(
                     favoriteCharacter = it
                 )
@@ -122,10 +128,10 @@ class CharacterViewModel @Inject constructor(
 
     }
 
-    fun deleteCharacterFromMyFavoriteList(character: CharactersDomain) {
+    fun deleteCharacterFromMyFavoriteList(character: Characters) {
         viewModelScope.launch {
             try {
-                repository.deleteCharacterFromMyFavoriteList(character)
+                deleteCharacterFromMyFavoriteListUseCase.deleteCharacterFromMyFavoriteList(character)
                 updateToastMessage(app.getString(R.string.toast_message_success))
             } catch (e: Exception) {
                 updateToastMessage(app.getString(R.string.toast_message_error))
@@ -154,11 +160,11 @@ class CharacterViewModel @Inject constructor(
         )
     }
 
-    private fun getFavoriteCharacter(): List<CharactersDomain> {
+    private fun getFavoriteCharacter(): List<Characters> {
         return _state.value.favoriteCharacter
     }
 
-    fun isHasAddedCharacter(charactersDomain: CharactersDomain): Boolean {
+    fun isHasAddedCharacter(charactersDomain: Characters): Boolean {
 
         val myFavoriteList = this.getFavoriteCharacter()
         var result = false
@@ -172,16 +178,6 @@ class CharacterViewModel @Inject constructor(
         return result
     }
 
-    private fun setListLayoutManager(newType: ListType) {
-        _state.value = _state.value.copy(
-            listType = newType
-        )
-    }
-
-    fun getListType(): ListType {
-        return _state.value.listType
-    }
-
     fun getIsShowToastMessage(): Boolean {
         return _state.value.showToastMessageEvent
     }
@@ -189,12 +185,4 @@ class CharacterViewModel @Inject constructor(
     fun getToastMessage(): String {
         return _state.value.toastMessage
     }
-
-    fun setLayoutManager() {
-        when (this.getListType()) {
-            ListType.GridLayout -> this.setListLayoutManager(ListType.LinearLayout)
-            else -> this.setListLayoutManager(ListType.GridLayout)
-        }
-    }
-
 }

@@ -28,6 +28,7 @@ class FavoriteListFragment : Fragment() {
     private val viewModel: FavoriteViewModel by viewModels()
 
     private val swipeCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+
         override fun onMove(
             recyclerView: RecyclerView,
             viewHolder: RecyclerView.ViewHolder,
@@ -91,8 +92,6 @@ class FavoriteListFragment : Fragment() {
                 adapter.submitList(it)
             }
         }
-
-
     }
 
     private fun prepareAdapter() {

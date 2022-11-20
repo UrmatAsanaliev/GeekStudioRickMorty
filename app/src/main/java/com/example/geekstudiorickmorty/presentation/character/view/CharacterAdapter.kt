@@ -1,4 +1,4 @@
-package comprmto.rickyandmorty.presentation.adapter
+package com.example.geekstudiorickmorty.presentation.character.view
 
 import android.view.LayoutInflater
 import android.view.View
@@ -10,8 +10,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.geekstudiorickmorty.R
 import com.example.geekstudiorickmorty.databinding.CharacterItemRcwBinding
-import com.example.geekstudiorickmorty.domain.model.CharactersDomain
-import com.example.geekstudiorickmorty.presentation.character.view.CharacterListFragmentDirections
+import com.example.geekstudiorickmorty.domain.model.Characters
 import com.example.geekstudiorickmorty.presentation.character.viewmodel.states.ListType
 import com.example.geekstudiorickmorty.presentation.favorite.adapter.FavoriteCharacterAdapter
 import com.example.geekstudiorickmorty.util.ItemLongClickListener
@@ -24,7 +23,7 @@ class CharacterAdapter(
     private val onLongClickListener: ItemLongClickListener,
     private var listType: ListType = ListType.GridLayout
 ) :
-    PagingDataAdapter<CharactersDomain, RecyclerView.ViewHolder>(DiffUtilCallBack()) {
+    PagingDataAdapter<Characters, RecyclerView.ViewHolder>(DiffUtilCallBack()) {
 
     fun setListType(listType: ListType) {
         this.listType = listType
@@ -40,7 +39,6 @@ class CharacterAdapter(
                     navigateToCharacterDetail(id, it)
                 }
             }
-
         }
 
         private fun navigateToCharacterDetail(id: Int, view: View) {
@@ -63,7 +61,7 @@ class CharacterAdapter(
             }
         }
 
-        fun bind(characterModel: CharactersDomain) {
+        fun bind(characterModel: Characters) {
             binding.characterModel = characterModel
             binding.executePendingBindings()
 
@@ -87,7 +85,6 @@ class CharacterAdapter(
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-
         val characterModel = getItem(position)
         if (listType == ListType.GridLayout) {
 
@@ -102,7 +99,7 @@ class CharacterAdapter(
         } else {
             holder as FavoriteCharacterAdapter.CharacterViewHolder
             holder.binding.setClickListener {
-                holder.binding?.characterModel?.id?.let { characterId ->
+                holder.binding.characterModel?.id?.let { characterId ->
                     holder.navigateToCharacterDetail(id = characterId, it, FROMCHARACTERLIST)
                 }
             }
@@ -122,12 +119,12 @@ class CharacterAdapter(
 
 }
 
-class DiffUtilCallBack : DiffUtil.ItemCallback<CharactersDomain>() {
-    override fun areItemsTheSame(oldItem: CharactersDomain, newItem: CharactersDomain): Boolean {
+class DiffUtilCallBack : DiffUtil.ItemCallback<Characters>() {
+    override fun areItemsTheSame(oldItem: Characters, newItem: Characters): Boolean {
         return oldItem.id == newItem.id
     }
 
-    override fun areContentsTheSame(oldItem: CharactersDomain, newItem: CharactersDomain): Boolean {
+    override fun areContentsTheSame(oldItem: Characters, newItem: Characters): Boolean {
         return oldItem == newItem
     }
 

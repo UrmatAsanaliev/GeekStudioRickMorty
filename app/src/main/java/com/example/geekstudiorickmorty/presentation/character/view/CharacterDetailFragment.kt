@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.geekstudiorickmorty.databinding.FragmentCharacterDetailBinding
 import com.example.geekstudiorickmorty.presentation.character.viewmodel.CharacterDetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -19,7 +18,7 @@ class CharacterDetailFragment : Fragment() {
 
     private var _binding: FragmentCharacterDetailBinding? = null
     private val binding get() = _binding!!
-    private val characterArgument: CharacterDetailFragmentArgs by navArgs()
+    private val characterArgument: com.example.geekstudiorickmorty.presentation.character.view.CharacterDetailFragmentArgs by navArgs()
     private lateinit var viewModel: CharacterDetailViewModel
 
     override

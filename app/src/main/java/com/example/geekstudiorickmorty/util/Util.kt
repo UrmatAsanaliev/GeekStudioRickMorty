@@ -24,8 +24,6 @@ class Util {
             } else {
                 button.visibility = View.GONE
             }
-
-
         }
     }
 }

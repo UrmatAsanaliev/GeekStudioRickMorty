@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
 
         val navController = navHostFragment.navController
 
-        binding.bottomNavigationBar?.setupWithNavController(navController)
+        binding.bottomNavigationBar.setupWithNavController(navController)
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             val isVisibleBottomBar = when (destination.id) {
@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
                 else -> true
             }
 
-            binding.bottomNavigationBar?.isVisible = isVisibleBottomBar
+            binding.bottomNavigationBar.isVisible = isVisibleBottomBar
         }
     }
 

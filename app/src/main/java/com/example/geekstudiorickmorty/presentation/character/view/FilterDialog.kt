@@ -73,7 +73,7 @@ class FilterDialog : BottomSheetDialogFragment() {
 
         binding.btnApply.setOnClickListener {
             val action =
-                FilterDialogDirections.actionFilterDialogToCharacterListFragment()
+                com.example.geekstudiorickmorty.presentation.character.view.FilterDialogDirections.actionFilterDialogToCharacterListFragment()
             findNavController().navigate(action)
         }
 

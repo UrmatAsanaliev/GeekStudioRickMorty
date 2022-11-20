@@ -9,7 +9,7 @@
 
         <variable
             name="characterModel"
-            type="com.example.geekstudiorickmorty.domain.model.CharactersDomain" />
+            type="com.example.geekstudiorickmorty.domain.model.Characters" />
     </data>
 
     <com.google.android.material.card.MaterialCardView

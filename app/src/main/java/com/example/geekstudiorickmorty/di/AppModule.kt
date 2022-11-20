@@ -34,6 +34,10 @@ object AppModule {
             .create(RickyAndMortyApi::class.java)
     }
 
+    @Singleton
+    @Provides
+    fun provideCharacterDao(db: RickAndMortyDatabase) = db.rickMortyDao
+
     @Provides
     @Singleton
     fun provideRickAndMortyRepository(
@@ -47,6 +51,7 @@ object AppModule {
     @Singleton
     fun provideRickAndMortyDatabase(app: Application): RickAndMortyDatabase {
         return Room.databaseBuilder(app, RickAndMortyDatabase::class.java, "FavoriteDatabase")
+            .allowMainThreadQueries()
             .build()
     }
 

@@ -6,11 +6,7 @@ import androidx.paging.PagingData
 import com.example.geekstudiorickmorty.data.local.RickAndMortyDao
 import com.example.geekstudiorickmorty.data.remote.RickyAndMortyApi
 import com.example.geekstudiorickmorty.data.remote.dto.character.CharacterData
-import com.example.geekstudiorickmorty.data.remote.dto.episode.EpisodeResult
-import com.example.geekstudiorickmorty.data.remote.dto.location.LocationResults
-import com.example.geekstudiorickmorty.domain.model.CharactersDomain
-import com.example.geekstudiorickmorty.domain.model.EpisodeDomain
-import com.example.geekstudiorickmorty.domain.model.LocationDomain
+import com.example.geekstudiorickmorty.domain.model.Characters
 import com.example.geekstudiorickmorty.domain.repository.RickAndMortyRepository
 import com.example.geekstudiorickmorty.paging.CharactersPagingDataSource
 import com.example.geekstudiorickmorty.util.GenderState
@@ -48,15 +44,15 @@ class RickAndMortyImpl @Inject constructor(
     }
 
 
-    override suspend fun getAllFavoriteCharacters(): Flow<List<CharactersDomain>> {
+    override suspend fun getAllFavoriteCharacters(): Flow<List<Characters>> {
         return dao.getAllFavoriteCharacters()
     }
 
-    override suspend fun insertMyFavoriteList(character: CharactersDomain) {
+    override suspend fun insertMyFavoriteList(character: Characters) {
         dao.insertFavoriteCharacter(character = character)
     }
 
-    override suspend fun deleteCharacterFromMyFavoriteList(character: CharactersDomain) {
+    override suspend fun deleteCharacterFromMyFavoriteList(character: Characters) {
         dao.deleteFavoriteCharacter(character)
     }
 
