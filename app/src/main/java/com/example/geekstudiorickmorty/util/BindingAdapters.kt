@@ -17,7 +17,6 @@ fun downloadImage(imageView: ImageView, url: String?) {
         imageView.load(url) {
             crossfade(true)
                 .error(R.drawable.error_image)
-                .placeholder(R.drawable.animate_loading)
         }
 
     }

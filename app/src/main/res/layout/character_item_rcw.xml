@@ -35,9 +35,7 @@
                 android:layout_height="wrap_content"
                 android:minHeight="140dp"
                 android:scaleType="centerCrop"
-                app:imageUrl="@{characterModel.image}"
-                tools:srcCompat="@tools:sample/avatars" />
-
+                app:imageUrl="@{characterModel.image}"/>
 
             <TextView
                 android:id="@+id/characterName"

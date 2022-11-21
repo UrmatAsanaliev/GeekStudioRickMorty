@@ -18,7 +18,7 @@ class CharacterDetailFragment : Fragment() {
 
     private var _binding: FragmentCharacterDetailBinding? = null
     private val binding get() = _binding!!
-    private val characterArgument: com.example.geekstudiorickmorty.presentation.character.view.CharacterDetailFragmentArgs by navArgs()
+    private val characterArgument: CharacterDetailFragmentArgs by navArgs()
     private lateinit var viewModel: CharacterDetailViewModel
 
     override
@@ -46,11 +46,6 @@ class CharacterDetailFragment : Fragment() {
 
 
         return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
     }
 
     override fun onDestroyView() {

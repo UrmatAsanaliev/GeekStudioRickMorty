@@ -19,7 +19,6 @@ class RickAndMortyImpl @Inject constructor(
     private val dao: RickAndMortyDao
 ) : RickAndMortyRepository {
 
-
     override suspend fun getAllCharacters(
         status: StatusState,
         gender: GenderState,
@@ -38,11 +37,9 @@ class RickAndMortyImpl @Inject constructor(
         ).flow
     }
 
-
     override suspend fun getCharacterDetailById(characterId: Int): CharacterData {
         return api.getCharacter(characterId)
     }
-
 
     override suspend fun getAllFavoriteCharacters(): Flow<List<Characters>> {
         return dao.getAllFavoriteCharacters()
@@ -55,6 +52,5 @@ class RickAndMortyImpl @Inject constructor(
     override suspend fun deleteCharacterFromMyFavoriteList(character: Characters) {
         dao.deleteFavoriteCharacter(character)
     }
-
 
 }

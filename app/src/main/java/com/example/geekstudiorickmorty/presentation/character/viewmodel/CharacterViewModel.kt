@@ -1,13 +1,13 @@
 package com.example.geekstudiorickmorty.presentation.character.viewmodel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import com.example.geekstudiorickmorty.R
 import com.example.geekstudiorickmorty.data.remote.dto.character.toCharactersDomain
 import com.example.geekstudiorickmorty.domain.model.Characters
-import com.example.geekstudiorickmorty.domain.repository.RickAndMortyRepository
 import com.example.geekstudiorickmorty.domain.use_case.DeleteCharacterFromMyFavoriteListUseCase
 import com.example.geekstudiorickmorty.domain.use_case.GetAllCharactersUseCase
 import com.example.geekstudiorickmorty.domain.use_case.GetAllFavoriteCharactersUseCase
@@ -39,7 +39,6 @@ class CharacterViewModel @Inject constructor(
         getAllFavoriteCharacters()
 
         viewModelScope.launch {
-
             getListData().collect {
                 _state.value = _state.value.copy(
                     characters = it
@@ -50,12 +49,9 @@ class CharacterViewModel @Inject constructor(
         _state.value.favoriteCharacter.forEach {
             Timber.d(it.name)
         }
-
-
     }
 
     suspend fun getListData(): Flow<PagingData<Characters>> {
-
         var characterName = _state.value.queryCharacterName.value
 
         if (characterName == null) {
@@ -64,6 +60,7 @@ class CharacterViewModel @Inject constructor(
 
         val list = _state.value.favoriteCharacter
 
+        Log.e("-------list", "${list.size}")
 
         return getAllCharactersUseCase.getAllCharacters(
             status = _state.value.statusState,

@@ -1,69 +1,88 @@
 package com.example.geekstudiorickmorty.presentation.character.view
 
-import android.os.Bundle
-import android.view.LayoutInflater
+
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.geekstudiorickmorty.R
+import com.example.geekstudiorickmorty.core.BaseFragment
 import com.example.geekstudiorickmorty.databinding.FragmentCharacterListBinding
 import com.example.geekstudiorickmorty.domain.model.Characters
 import com.example.geekstudiorickmorty.presentation.character.viewmodel.CharacterViewModel
 import com.example.geekstudiorickmorty.presentation.character.viewmodel.states.ListType
+import com.example.geekstudiorickmorty.presentation.favorite.adapter.FavoriteCharacterAdapter
 import com.example.geekstudiorickmorty.presentation.favorite.viewModel.FavoriteViewModel
-import com.example.geekstudiorickmorty.util.CalculateWindowSize
 import com.example.geekstudiorickmorty.util.ItemLongClickListener
 import com.example.geekstudiorickmorty.util.Util
-import com.example.geekstudiorickmorty.util.WindowSizeClass
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class CharacterListFragment : Fragment() {
+class CharacterListFragment : BaseFragment<FragmentCharacterListBinding>
+    (R.layout.fragment_character_list) {
 
-    private lateinit var binding: FragmentCharacterListBinding
     lateinit var viewModel: CharacterViewModel
-    lateinit var viewModelFavorite: FavoriteViewModel
+
+    private lateinit var viewModelFavorite: FavoriteViewModel
+
     private lateinit var characterAdapter: CharacterAdapter
-    lateinit var widthWindowClass: WindowSizeClass
 
+    private lateinit var favoriteAdapter: FavoriteCharacterAdapter
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun setupObserver() {
+        toSortFragment()
+        btnRefresh()
+    }
 
+    private fun toSortFragment() {
+        binding.imageButton.setOnClickListener {
+            val action =
+                CharacterListFragmentDirections.actionCharacterListFragmentToFilterDialog()
+            Navigation.findNavController(it).navigate(action)
+        }
+    }
 
-        binding = FragmentCharacterListBinding.inflate(layoutInflater, container, false)
-        viewModel = ViewModelProvider(requireActivity())[CharacterViewModel::class.java]
-        viewModelFavorite = ViewModelProvider(requireActivity())[FavoriteViewModel::class.java]
-
-        widthWindowClass = CalculateWindowSize(requireActivity()).calculateCurrentWidthSize()
-
-        binding.lifecycleOwner = viewLifecycleOwner
-        binding.viewModel = viewModel
-
+    override fun setupUi() {
+        initViewModel()
+        initAdapter()
         prepareCharacterAdapter()
         setCharacterListLayoutManager()
-
-        viewModel.checkIfTheFilterHasBeenApplied()
-
         getListData()
+        initRefresh()
+        isNetworkAvailable(requireContext())
+    }
 
-        binding.refreshBtn.setOnClickListener {
-        }
 
+    override fun noInternet() {
+        noInternets()
+    }
+
+    override fun internetConnected() {
+        binding.refreshBtn.visibility = View.GONE
+        initAdapter()
+        setCharacterListLayoutManager()
+        prepareCharacterAdapter()
+        getListData()
+    }
+
+    private fun noInternets() {
+        Toast.makeText(context, "У вас нету интернета!1!!", Toast.LENGTH_LONG).show()
+        favoriteAdapter = FavoriteCharacterAdapter()
+        binding.characterList.adapter = favoriteAdapter
+        binding.characterList.layoutManager = LinearLayoutManager(requireContext())
+    }
+
+    private fun initRefresh() {
         lifecycleScope.launch {
             characterAdapter.loadStateFlow.collect {
-                val isListEmpty =
-                    it.refresh is LoadState.Error && characterAdapter.itemCount == 0
+                val isListEmpty = it.refresh is LoadState.Error && characterAdapter.itemCount == 0
                 Util.loadingState(
                     it,
                     binding.refreshBtn,
@@ -72,15 +91,45 @@ class CharacterListFragment : Fragment() {
                 )
             }
         }
-
-        return binding.root
     }
 
-    private fun setCharacterListLayoutManager() {
-            val spanCount = if (widthWindowClass == WindowSizeClass.EXPANDED) 3 else 2
-            binding.characterList.layoutManager = GridLayoutManager(requireContext(), spanCount)
-            characterAdapter.setListType(ListType.GridLayout)
+    private fun btnRefresh() {
+        binding.refreshBtn.setOnClickListener {
+            isNetworkAvailable(requireContext())
+        }
+    }
 
+    private fun initViewModel() {
+        viewModel = ViewModelProvider(requireActivity())[CharacterViewModel::class.java]
+
+        viewModelFavorite = ViewModelProvider(requireActivity())[FavoriteViewModel::class.java]
+
+        binding.lifecycleOwner = viewLifecycleOwner
+        binding.viewModel = viewModel
+
+        viewModel.checkIfTheFilterHasBeenApplied()
+    }
+
+    private fun initAdapter() {
+        favoriteAdapter = FavoriteCharacterAdapter()
+        characterAdapter = CharacterAdapter(
+            ItemLongClickListener {
+                showAlertDialog(it)
+            },
+        )
+
+
+        lifecycleScope.launch {
+            viewModelFavorite.getFavoriteCharacters().collect {
+                favoriteAdapter.submitList(it)
+            }
+        }
+    }
+
+
+    private fun setCharacterListLayoutManager() {
+        binding.characterList.layoutManager = GridLayoutManager(requireContext(), 2)
+        characterAdapter.setListType(ListType.GridLayout)
     }
 
     private fun getListData() {
@@ -92,16 +141,10 @@ class CharacterListFragment : Fragment() {
     }
 
     private fun prepareCharacterAdapter() {
-        characterAdapter = CharacterAdapter(
-            ItemLongClickListener {
-                showAlertDialog(it)
-            }
-        )
         setCharacterListLayoutManager()
         characterAdapter.stateRestorationPolicy =
             RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         binding.characterList.adapter = characterAdapter
-
     }
 
     private fun showAlertDialog(charactersDomain: Characters) {
@@ -110,15 +153,15 @@ class CharacterListFragment : Fragment() {
 
         val isHasAddedCharacter = viewModel.isHasAddedCharacter(charactersDomain)
 
-            if (isHasAddedCharacter) {
-                viewModel.deleteCharacterFromMyFavoriteList(charactersDomain)
+        if (isHasAddedCharacter) {
+            viewModel.deleteCharacterFromMyFavoriteList(charactersDomain)
 
-            } else {
-                charactersDomain.setFavoriteState(true)
-                viewModel.insertMyFavoriteList(charactersDomain)
-            }
-            showToastMessage()
-            viewModel.doneToastMessage()
+        } else {
+            charactersDomain.setFavoriteState(true)
+            viewModel.insertMyFavoriteList(charactersDomain)
+        }
+        showToastMessage()
+        viewModel.doneToastMessage()
 
     }
 
@@ -133,14 +176,10 @@ class CharacterListFragment : Fragment() {
     }
 
 
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        binding.imageButton.setOnClickListener {
-            val action =
-                CharacterListFragmentDirections.actionCharacterListFragmentToFilterDialog()
-            Navigation.findNavController(it).navigate(action)
-        }
+    override fun onPause() {
+        super.onPause()
+        characterAdapter.snapshot().items.forEach { viewModel.insertMyFavoriteList(it) }
     }
+
+
 }

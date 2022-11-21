@@ -6,7 +6,5 @@ import javax.inject.Inject
 class GetCharacterDetailByIdUseCase @Inject constructor(
     private val repo: RickAndMortyRepository
 ) {
-
-
     suspend fun getCharactersDetails(id: Int) = repo.getCharacterDetailById(id)
 }

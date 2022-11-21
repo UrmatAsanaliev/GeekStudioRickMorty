@@ -32,8 +32,8 @@ class FilterDialog : BottomSheetDialogFragment() {
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
 
-        var statusState: StatusState = StatusState.NONE
-        var genderState: GenderState = GenderState.NONE
+        var statusState: StatusState
+        var genderState: GenderState
 
 
         lifecycleScope.launch {
@@ -48,7 +48,7 @@ class FilterDialog : BottomSheetDialogFragment() {
 
         }
 
-        binding.rgStatus.setOnCheckedChangeListener { radioGroup, idThatSelected ->
+        binding.rgStatus.setOnCheckedChangeListener { _, idThatSelected ->
             viewModel.setStatusState(
                 when (idThatSelected) {
                     binding.rbAlive.id -> StatusState.ALIVE
@@ -59,7 +59,7 @@ class FilterDialog : BottomSheetDialogFragment() {
             )
         }
 
-        binding.rgGender.setOnCheckedChangeListener { radioGroup, idThatSelected ->
+        binding.rgGender.setOnCheckedChangeListener { _, idThatSelected ->
             viewModel.setGenderState(
                 when (idThatSelected) {
                     binding.rbFemale.id -> GenderState.FEMALE
@@ -73,7 +73,7 @@ class FilterDialog : BottomSheetDialogFragment() {
 
         binding.btnApply.setOnClickListener {
             val action =
-                com.example.geekstudiorickmorty.presentation.character.view.FilterDialogDirections.actionFilterDialogToCharacterListFragment()
+                FilterDialogDirections.actionFilterDialogToCharacterListFragment()
             findNavController().navigate(action)
         }
 
@@ -95,8 +95,6 @@ class FilterDialog : BottomSheetDialogFragment() {
                 }
             )
         }
-
-
     }
 
     private fun updateRadioGroupStatusThatLastData(statusState: StatusState) {

@@ -2,7 +2,6 @@ package com.example.geekstudiorickmorty.presentation.character.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.geekstudiorickmorty.domain.repository.RickAndMortyRepository
 import com.example.geekstudiorickmorty.domain.use_case.GetCharacterDetailByIdUseCase
 import com.example.geekstudiorickmorty.presentation.character.viewmodel.states.CharacterDetailState
 import dagger.hilt.android.lifecycle.HiltViewModel

@@ -3,7 +3,6 @@ package com.example.geekstudiorickmorty.presentation.favorite.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.geekstudiorickmorty.domain.model.Characters
-import com.example.geekstudiorickmorty.domain.repository.RickAndMortyRepository
 import com.example.geekstudiorickmorty.domain.use_case.DeleteCharacterFromMyFavoriteListUseCase
 import com.example.geekstudiorickmorty.domain.use_case.GetAllFavoriteCharactersUseCase
 import com.example.geekstudiorickmorty.presentation.favorite.FavoriteState

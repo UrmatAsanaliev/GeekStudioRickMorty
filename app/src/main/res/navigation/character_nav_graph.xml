@@ -20,6 +20,10 @@
         <action
             android:id="@+id/action_characterListFragment_to_filterDialog"
             app:destination="@id/filterDialog" />
+
+        <action
+            android:id="@+id/action_characterListFragment_to_favoriteListFragment"
+            app:destination="@id/favoriteListFragment"/>
     </fragment>
 
     <fragment
